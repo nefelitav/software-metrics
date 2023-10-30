@@ -2,8 +2,9 @@ module Main
 
 import IO;
 import List;
-import Set;
-import String;
+// import Set;
+// import Map;
+// import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 
@@ -27,6 +28,7 @@ int getNumberOfInterfaces(list[Declaration] asts){
     return interfaces;
 }
 
+// Problem 1
 int getNumberOfForLoops(list[Declaration] asts){
     int loops = 0;
     visit(asts){
@@ -37,20 +39,28 @@ int getNumberOfForLoops(list[Declaration] asts){
     return loops;
 }
 
-
-// Helper function to count the occurrences of variables
-map[str, int] countOccurrences(list[Declaration] declarations) {
+// Problem 2
+// count the occurrences of variables
+map[str, int] countOccurrences(list[Declaration] asts) {
     map[str, int] occurrences = ();
-    for (decl <- declarations) {
-        switch (decl) {
-            case \variable(name, _): 
-                occurrences += (name : occurrences[name] + 1);
-        }
+    visit(asts){
+        case \variable(name, _): 
+            if (name in occurrences) {
+                occurrences[name] += 1;
+            } else {
+                occurrences[name] = 1;
+            }
+        case \variable(name, _, _): 
+            if (name in occurrences) {
+                occurrences[name] += 1;
+            } else {
+                occurrences[name] = 1;
+            }
     }
     return occurrences;
 }
 
-// Function to find the most occurring variable(s)
+// find the most occurring variable(s)
 tuple[int, list[str]] mostOccurringVariables(list[Declaration] asts) {
     map[str, int] occurrences = countOccurrences(asts);
     int maxCount = 0;
@@ -67,45 +77,64 @@ tuple[int, list[str]] mostOccurringVariables(list[Declaration] asts) {
     return <maxCount, mostOccurring>;
 }
 
-
-
-// Helper function to count the occurrences of variables
-map[str, int] countNumberOccurrences(list[Declaration] declarations) {
+// Problem 3
+// count the occurrences of numbers
+map[str, int] countNumberOccurrences(list[Declaration] asts) {
     map[str, int] occurrences = ();
-    for (decl <- declarations) {
-        switch (decl) {
-            case \number(number):
-                occurrences += (number : occurrences[number] + 1);
-        }
+    visit(asts){
+        case \number(name): 
+            if (name in occurrences) {
+                occurrences[name] += 1;
+            } else {
+                occurrences[name] = 1;
+            }
     }
     return occurrences;
 }
 
-// Function to find the most occurring variable(s)
+// find the most occurring number(s)
 tuple[int, list[str]] mostOccurringNumbers(list[Declaration] asts) {
     map[str, int] occurrences = countNumberOccurrences(asts);
     int maxCount = 0;
     list[str] mostOccurring = [];
-    for (str number <- occurrences) {
-        count = occurrences[number];
+    for (str name <- occurrences) {
+        count = occurrences[name];
         if (count > maxCount) {
             maxCount = count;
-            mostOccurring = [number];
+            mostOccurring = [name];
         } else if (count == maxCount) {
-            mostOccurring += number;
+            mostOccurring += name;
         }
     }
     return <maxCount, mostOccurring>;
 }
 
+// Problem 4
 list[loc] findNullReturned(list[Declaration] asts){
-// TODO: Create this function
+	list[loc] locs = [];
+	visit(asts){
+		case \return(expr): {
+			if (expr.typ == \null()) {
+                locs += expr.src;
+            }
+		}
+	}
+	return locs;
 }
 
+// Tests on smallsql
 test bool numberOfInterfaces() {
     return getNumberOfInterfaces(getASTs(|project://smallsql0.21_src|)) == 1;
 }
 
 test bool numberOfForLoops() {
     return getNumberOfForLoops(getASTs(|project://smallsql0.21_src|)) == 259;
+}
+
+test bool mostOccurringVars() {
+    return mostOccurringVariables(getASTs(|project://smallsql0.21_src|)) == <205,["i"]>;
+}
+
+test bool mostOccurringNums() {
+    return mostOccurringNumbers(getASTs(|project://smallsql0.21_src|)) == <1382,["0"]>;
 }
