@@ -26,7 +26,30 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
-int volume(int testArgument=0) {
-    println("argument: <testArgument>");
+// int linesOfCodeFile(int testArgument=0) {
+//     return testArgument;
+// }
+
+int linesOfCodeProject(loc projectLocation) {
     return testArgument;
+}
+
+// public int countLineComments(int testArgument=0) {
+//     return testArgument;
+// }
+
+// public int countBlockComments(int testArgument=0) {
+//     return testArgument;
+// }
+
+// public int countBlankLines(int testArgument=0) {
+//     return testArgument;
+// }
+
+public str manYears(int LOC) {
+    return 	((LOC >= 0 && LOC < 66000) ? "++" : "") +
+  			((LOC >= 66000 && LOC < 246000) ? "+" : "") +
+  			((LOC >= 246000 && LOC < 665000) ? "o" : "") + 
+  			((LOC >= 665000 && LOC < 1310000) ? "-" : "") + 
+  			((LOC > 1310000) ? "--" : "");
 }

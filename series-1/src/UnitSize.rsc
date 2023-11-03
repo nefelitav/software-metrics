@@ -17,3 +17,7 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
+int linesOfCodeUnit(int testArgument=0) {
+    println("argument: <testArgument>");
+    return testArgument;
+}
