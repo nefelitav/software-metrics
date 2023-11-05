@@ -3,7 +3,7 @@ module Volume
 import IO;
 import List;
 import Set;
-import Map;
+// import Map;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
@@ -26,25 +26,69 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
-// int linesOfCodeFile(int testArgument=0) {
-//     return testArgument;
-// }
-
-int linesOfCodeProject(loc projectLocation) {
-    return testArgument;
+int LOC(loc projectLoc) {
+    return (linesOfCodeProject(projectLoc) - countBlankLinesProject(projectLoc) - countCommentsProject(projectLoc));
 }
 
-// public int countLineComments(int testArgument=0) {
-//     return testArgument;
-// }
+int linesOfCodeFile(loc fileLoc) {
+    int fileSize = size(readFileLines(fileLoc));
+    return fileSize;
+}
 
-// public int countBlockComments(int testArgument=0) {
-//     return testArgument;
-// }
+int linesOfCodeProject(loc projectLoc) {
+    M3 model = createM3FromMavenProject(projectLoc);
+    int sumSize = 0;
+    for (file <- files(model.containment)) {
+        sumSize += linesOfCodeFile(file.top);
+    }
+    return sumSize;
+}
 
-// public int countBlankLines(int testArgument=0) {
-//     return testArgument;
-// }
+public int countBlankLinesFile(loc fileLoc) {
+    int blankLines = 0;
+    for (line <- readFileLines(fileLoc)) {
+        if (trim(line) == "") {
+            blankLines += 1;   
+        }
+    }
+    return blankLines;
+}
+
+int countBlankLinesProject(loc projectLoc) {
+    M3 model = createM3FromMavenProject(projectLoc);
+    int sumBlankLines = 0;
+    for (file <- files(model.containment)) {
+        sumBlankLines += countBlankLinesFile(file.top);
+    }
+    return sumBlankLines;
+}
+
+public int countCommentsFile(loc fileLoc) {
+    int lineComments = 0;
+    int blockComments = 0;
+    bool insideBlockComment = false;
+    for (line <- readFileLines(fileLoc)) {
+        if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
+            insideBlockComment = true;
+            blockComments += 1;  
+            if (endsWith(trim(line), "*/")) {
+                insideBlockComment = false; 
+            }
+        } else if (startsWith(trim(line), "//")) {
+            lineComments += 1;   
+        }
+    }
+    return lineComments + blockComments;
+}
+
+int countCommentsProject(loc projectLoc) {
+    M3 model = createM3FromMavenProject(projectLoc);
+    int sumComments = 0;
+    for (file <- files(model.containment)) {
+        sumComments += countCommentsFile(file.top);
+    }
+    return sumComments;
+}
 
 public str manYears(int LOC) {
     return 	((LOC >= 0 && LOC < 66000) ? "++" : "") +
