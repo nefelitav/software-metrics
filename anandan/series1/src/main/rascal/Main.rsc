@@ -20,14 +20,25 @@ map[str, int] addToMap(map[str, int] blocks, str block){
 map[str, int] createBlocks(map[str, int] blocks, loc fileLoc) {
     list[str] lines = [];
     str line = "";
+    bool insideBlockComment = false;
     for (str line <- readFileLines(fileLoc)) {
-        if (trim(line) != "") {
-            lines += line;
-            if (size(lines) == 6){
-                // if the lines are 6 it considered as a bloack and added to the map
-                str block = lines[0] + lines[1] + lines[2] + lines[3] + lines[4] + lines[5];
-                blocks = addToMap(blocks, block);
-                lines = lines[1..5]; // Remove the first line and make it ready to form next block
+        if (trim(line) != "" && !startsWith(trim(line), "//")) {
+             if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
+                // inside the block comment
+                insideBlockComment = true;
+                if (endsWith(trim(line), "*/")) {
+                    // outside the block comment
+                    insideBlockComment = false; 
+                }
+            }
+            else {
+                lines += line;
+                if (size(lines) == 6){
+                    // if the lines are 6 it considered as a bloack and added to the map
+                    str block = lines[0] + lines[1] + lines[2] + lines[3] + lines[4] + lines[5];
+                    blocks = addToMap(blocks, block);
+                    lines = lines[1..5]; // Remove the first line and make it ready to form next block
+                }
             }
         }
     }
@@ -35,17 +46,28 @@ map[str, int] createBlocks(map[str, int] blocks, loc fileLoc) {
 }
 
 // find duplicate blocks in a map
-map[str, int] findDuplicates(map[str, int] Blocks){
-    for (str block <- Blocks) {
-    if (Blocks[block] == 1){
-        Blocks = delete(Blocks, block); // Remove blocks which are not duplicated
+map[str, int] findDuplicates(map[str, int] blocks){
+    for (str block <- blocks) {
+    if (blocks[block] == 1){
+        blocks = delete(blocks, block); // Remove blocks which are not duplicated
     }
 }
-    return Blocks;
+    return blocks;
+}
+
+// Find number of lines duplicated
+int findNumberOfDuplicateLines(map[str, int] blocks){
+    int numberOfDuplicateLines = 0;
+    for (str block <- blocks) {
+        // if a block (lines of 6) is repeated 4 times it means 3 times it is duplicated.
+        // nuumberOfDuplicateLines = (total repetations -1) * 6
+        numberOfDuplicateLines += (blocks[block] - 1) * 6;
+    }
+    return numberOfDuplicateLines;
 }
 
 // Find Duplicate blocks (6 lines ) of code in a project
-map[str, int] duplicateBlocksOfCodeProject(loc projectLoc) {
+int duplicateBlocksOfCodeProject(loc projectLoc) {
     map[str, int] blocks = ();
     M3 model = createM3FromMavenProject(projectLoc);
     // iterate over files of project and create blocks
@@ -54,11 +76,17 @@ map[str, int] duplicateBlocksOfCodeProject(loc projectLoc) {
     }
 
     map[str, int] duplicateBlocks = findDuplicates(blocks);
-    return duplicateBlocks;
+
+    int numberOfDuplicateLines = findNumberOfDuplicateLines(duplicateBlocks);
+
+    // int totalLine = LOC(); Needs to be called when integrating Nefeli's code
+    // might need to convert into real
+    int totalLines = 1000;
+    int percentageOfDuplicates = numberOfDuplicateLines * 100 / totalLines;
+    return percentageOfDuplicates;
 }
 
 int main(int testArgument=0) {
     println("argument: <testArgument>");
     return testArgument;
 }
-
