@@ -3,7 +3,6 @@ module Volume
 import IO;
 import List;
 import Set;
-// import Map;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
@@ -26,24 +25,29 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
+// number of lines of code without block and line comments and blank lines
 int LOC(loc projectLoc) {
     return (linesOfCodeProject(projectLoc) - countBlankLinesProject(projectLoc) - countCommentsProject(projectLoc));
 }
 
+// number of lines of code of a file
 int linesOfCodeFile(loc fileLoc) {
     int fileSize = size(readFileLines(fileLoc));
     return fileSize;
 }
 
+// number of lines of code of a project
 int linesOfCodeProject(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     int sumSize = 0;
+    // iterate over files of project
     for (file <- files(model.containment)) {
         sumSize += linesOfCodeFile(file.top);
     }
     return sumSize;
 }
 
+// number of blank lines of a file
 public int countBlankLinesFile(loc fileLoc) {
     int blankLines = 0;
     for (line <- readFileLines(fileLoc)) {
@@ -54,42 +58,53 @@ public int countBlankLinesFile(loc fileLoc) {
     return blankLines;
 }
 
+// number of blank lines of a project
 int countBlankLinesProject(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     int sumBlankLines = 0;
+    // iterate over files of a project
     for (file <- files(model.containment)) {
         sumBlankLines += countBlankLinesFile(file.top);
     }
     return sumBlankLines;
 }
 
+// number of line and block comments of a file
 public int countCommentsFile(loc fileLoc) {
     int lineComments = 0;
     int blockComments = 0;
     bool insideBlockComment = false;
+    // iterate over lines of file
     for (line <- readFileLines(fileLoc)) {
         if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
+            // inside the block comment
             insideBlockComment = true;
             blockComments += 1;  
             if (endsWith(trim(line), "*/")) {
+                // outside the block comment
                 insideBlockComment = false; 
             }
+        // if there is a line comment inside a block comment we do not add it to the line comments
         } else if (startsWith(trim(line), "//")) {
             lineComments += 1;   
         }
     }
+    // sum up line comments and block comments
     return lineComments + blockComments;
 }
 
+// number of line and block comments of a project
 int countCommentsProject(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     int sumComments = 0;
+    // iterate over files of a project
     for (file <- files(model.containment)) {
         sumComments += countCommentsFile(file.top);
     }
     return sumComments;
 }
 
+// calculate rating based on LOC
 public str manYears(int LOC) {
     return 	((LOC >= 0 && LOC < 66000) ? "++" : "") +
   			((LOC >= 66000 && LOC < 246000) ? "+" : "") +
