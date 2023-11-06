@@ -27,7 +27,7 @@ int main(int testArgument=0) {
 
 // number of lines of code without block and line comments and blank lines
 int LOC(loc projectLoc) {
-    return (linesOfCodeProject(projectLoc) - countBlankLinesProject(projectLoc) - countCommentsProject(projectLoc));
+    return (linesOfCodeProject(projectLoc) - blankLinesProject(projectLoc) - commentsProject(projectLoc));
 }
 
 // number of lines of code of a file
@@ -48,7 +48,7 @@ int linesOfCodeProject(loc projectLoc) {
 }
 
 // number of blank lines of a file
-public int countBlankLinesFile(loc fileLoc) {
+public int blankLinesFile(loc fileLoc) {
     int blankLines = 0;
     for (line <- readFileLines(fileLoc)) {
         if (trim(line) == "") {
@@ -59,18 +59,18 @@ public int countBlankLinesFile(loc fileLoc) {
 }
 
 // number of blank lines of a project
-int countBlankLinesProject(loc projectLoc) {
+int blankLinesProject(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     int sumBlankLines = 0;
     // iterate over files of a project
     for (file <- files(model.containment)) {
-        sumBlankLines += countBlankLinesFile(file.top);
+        sumBlankLines += blankLinesFile(file.top);
     }
     return sumBlankLines;
 }
 
 // number of line and block comments of a file
-public int countCommentsFile(loc fileLoc) {
+public int commentsFile(loc fileLoc) {
     int lineComments = 0;
     int blockComments = 0;
     bool insideBlockComment = false;
@@ -94,12 +94,12 @@ public int countCommentsFile(loc fileLoc) {
 }
 
 // number of line and block comments of a project
-int countCommentsProject(loc projectLoc) {
+int commentsProject(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     int sumComments = 0;
     // iterate over files of a project
     for (file <- files(model.containment)) {
-        sumComments += countCommentsFile(file.top);
+        sumComments += commentsFile(file.top);
     }
     return sumComments;
 }
@@ -111,4 +111,28 @@ public str manYears(int LOC) {
   			((LOC >= 246000 && LOC < 665000) ? "o" : "") + 
   			((LOC >= 665000 && LOC < 1310000) ? "-" : "") + 
   			((LOC > 1310000) ? "--" : "");
+}
+
+
+// Tests on smallsql
+test bool testLinesOfCodeFile() {
+    return linesOfCodeFile(|project://smallsql0.21_src/src/smallsql/database/Column.java|) == 182;
+}
+test bool testBlankLinesFile() {
+    return blankLinesFile(|project://smallsql0.21_src/src/smallsql/database/Column.java|) == 35;
+}
+test bool testCommentsFile() {
+    return commentsFile(|project://smallsql0.21_src/src/smallsql/database/Column.java|) == 37;
+}
+test bool testLinesOfCodeProject() {
+    return linesOfCodeProject(|project://smallsql0.21_src|) == 38423;
+}
+test bool testBlankLinesProject() {
+    return blankLinesProject(|project://smallsql0.21_src|) == 5394;
+}
+test bool testCommentsProject() {
+    return commentsProject(|project://smallsql0.21_src|) == 9025;
+}
+test bool testManYears() {
+    return manYears(LOC(|project://smallsql0.21_src|)) == "++";
 }
