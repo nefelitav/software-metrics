@@ -1,5 +1,6 @@
 module Main
 
+import util::Math;
 import IO;
 import List;
 import Set;
@@ -67,7 +68,7 @@ int findNumberOfDuplicateLines(map[str, int] blocks){
 }
 
 // Find Duplicate blocks (6 lines ) of code in a project
-int duplicateBlocksOfCodeProject(loc projectLoc) {
+str duplicateBlocksOfCodeProject(loc projectLoc) {
     map[str, int] blocks = ();
     M3 model = createM3FromMavenProject(projectLoc);
     // iterate over files of project and create blocks
@@ -82,9 +83,20 @@ int duplicateBlocksOfCodeProject(loc projectLoc) {
     // int totalLine = LOC(); Needs to be called when integrating Nefeli's code
     // might need to convert into real
     int totalLines = 1000;
-    int percentageOfDuplicates = numberOfDuplicateLines * 100 / totalLines;
-    return percentageOfDuplicates;
+    // percentage = part / whole * 100
+    int percentageOfDuplicates = round ((toReal (numberOfDuplicateLines)) / (toReal (totalLines)) * 100.0);
+    return duplicateRanking(percentageOfDuplicates);
 }
+
+// calculate ranking based on duplicateLOC
+public str duplicateRanking(int percentageOfDuplicates) {
+    return 	((percentageOfDuplicates >= 0 && percentageOfDuplicates <= 3) ? "++" : "") +
+  			((percentageOfDuplicates > 3 && percentageOfDuplicates <= 5) ? "+" : "") +
+  			((percentageOfDuplicates > 5 && percentageOfDuplicates <= 10) ? "o" : "") + 
+  			((percentageOfDuplicates > 10 && percentageOfDuplicates <= 20) ? "-" : "") + 
+  			((percentageOfDuplicates > 20) ? "--" : "");
+}
+
 
 int main(int testArgument=0) {
     println("argument: <testArgument>");
