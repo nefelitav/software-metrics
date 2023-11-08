@@ -25,25 +25,30 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
-list[Declaration] getASTs(loc projectLocation) {
-    M3 model = createM3FromMavenProject(projectLocation);
+list[Declaration] getASTs(loc projectLoc) {
+    M3 model = createM3FromMavenProject(projectLoc);
     list[Declaration] asts = [createAstFromFile(f, true)
     | f <- files(model.containment), isCompilationUnit(f)];
     return asts;
 }
 
 // number of assert statements, not in comments
-int countAssertStatements(loc projectLoc) {
-    list[Declaration] asts = getASTs(projectLoc);
+int countAssertStatements(loc methodLoc) {
     int asserts = 0;
-    visit(asts) {
-        case \methodCall(_, name, _): {
-            if (startsWith(name, "assert")) {
-                asserts += 1;
+    bool insideBlockComment = false;
+    for (line <- readFileLines(methodLoc)) {
+        println("argument");
+        // ignore comments
+        if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
+            // inside the block comment
+            insideBlockComment = true;
+            if (endsWith(trim(line), "*/")) {
+                // outside the block comment
+                insideBlockComment = false; 
             }
-        }
-        case \methodCall(_, _, name, _): {
-            if (startsWith(name, "assert")) {
+        // if there is a line comment inside a block comment we do not add it to the line comments
+        } else if (!startsWith(trim(line), "//")) {
+            if (contains(line, "assert")) {
                 asserts += 1;
             }
         }
@@ -54,8 +59,9 @@ int countAssertStatements(loc projectLoc) {
 map[loc, int] assertsInUnits(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     map[loc, int] methodsAsserts = ();
+    int assertStatements = 0;
     for(method <- methods(model)) {
-        int assertStatements = countAssertStatements(method);
+        assertStatements = countAssertStatements(method);
         // check that it is a test method
         if (assertStatements != 0) {
             methodsAsserts[method] = assertStatements;
