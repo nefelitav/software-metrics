@@ -20,7 +20,6 @@ int main(int testArgument=0) {
 
 map[loc, int] LOCUnits(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
-    int locUnit = 0;
     map[loc, int] methodsLoc = ();
     for(method <- methods(model)) {
         methodsLoc[method] = (linesOfCodeFile(method) - blankLinesFile(method) - commentsFile(method));
@@ -63,7 +62,7 @@ map[str, int] normalizeRisks(map[str, int] risks) {
 }
 
 // return rating
-str getRating(map[str, int] risks) {
+str unitSizeScore(map[str, int] risks) {
     if (risks["moderateRisk"] <= 25 && risks["highRisk"] == 0 && risks["veryHighRisk"] == 0) {
         return "++";
     } else if (risks["moderateRisk"] <= 30 && risks["highRisk"] <= 5 && risks["veryHighRisk"] == 0) {

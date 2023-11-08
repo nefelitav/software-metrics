@@ -105,7 +105,7 @@ int commentsProject(loc projectLoc) {
 }
 
 // calculate rating based on LOC
-str manYears(int LOC) {
+str volumeScore(int LOC) {
     return 	((LOC >= 0 && LOC < 66000) ? "++" : "") +
   			((LOC >= 66000 && LOC < 246000) ? "+" : "") +
   			((LOC >= 246000 && LOC < 665000) ? "o" : "") + 
@@ -133,6 +133,6 @@ test bool testBlankLinesProject() {
 test bool testCommentsProject() {
     return commentsProject(|project://smallsql0.21_src|) == 9025;
 }
-test bool testManYears() {
-    return manYears(LOC(|project://smallsql0.21_src|)) == "++";
+test bool testVolumeScore() {
+    return volumeScore(LOC(|project://smallsql0.21_src|)) == "++";
 }
