@@ -48,7 +48,7 @@ int linesOfCodeProject(loc projectLoc) {
 }
 
 // number of blank lines of a file
-public int blankLinesFile(loc fileLoc) {
+int blankLinesFile(loc fileLoc) {
     int blankLines = 0;
     for (line <- readFileLines(fileLoc)) {
         if (trim(line) == "") {
@@ -70,7 +70,7 @@ int blankLinesProject(loc projectLoc) {
 }
 
 // number of line and block comments of a file
-public int commentsFile(loc fileLoc) {
+int commentsFile(loc fileLoc) {
     int lineComments = 0;
     int blockComments = 0;
     bool insideBlockComment = false;
@@ -105,7 +105,7 @@ int commentsProject(loc projectLoc) {
 }
 
 // calculate rating based on LOC
-public str manYears(int LOC) {
+str manYears(int LOC) {
     return 	((LOC >= 0 && LOC < 66000) ? "++" : "") +
   			((LOC >= 66000 && LOC < 246000) ? "+" : "") +
   			((LOC >= 246000 && LOC < 665000) ? "o" : "") + 
