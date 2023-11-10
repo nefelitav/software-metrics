@@ -1,4 +1,4 @@
-module Maintainability
+module Metrics::Maintainability
 
 import IO;
 import List;
@@ -8,11 +8,11 @@ import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 
-import Volume;
-import UnitSize;
-import UnitComplexity;
-import Duplication;
-import UnitTesting;
+import Metrics::Volume;
+import Metrics::UnitSize;
+// import Metrics::UnitComplexity;
+// import Metrics::Duplication;
+import Metrics::UnitTesting;
 
 // Halstead Volume (HV)
 // Cyclomatic Complexity (CC) 

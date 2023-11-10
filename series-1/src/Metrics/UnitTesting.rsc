@@ -1,4 +1,4 @@
-module UnitTesting
+module Metrics::UnitTesting
 
 import IO;
 import List;

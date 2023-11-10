@@ -1,11 +1,8 @@
-- describing relevant design decisions, 
-- tests,results, 
-- and what you did to address threats to validity,
-- alternatives,
+- add comments
+- add tests, results, scalability
+- describe relevant design decisions, 
 - accuracy, improvements
-- scalable, analysis of algorithmic complexity/ empirical analysis
-- well-structured, automated tests
-- comments
-- find another metric in the literature and argue why and how it would improve the results
+- well-structured
+- find another metric in the literature and argue why and how it would improve the results, implement it
 - script to run
 - print everything

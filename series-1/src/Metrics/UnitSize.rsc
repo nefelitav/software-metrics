@@ -1,6 +1,6 @@
-module UnitSize
+module Metrics::UnitSize
 
-import Volume;
+import Metrics::Volume;
 import IO;
 import List;
 import lang::java::m3::Core;
@@ -80,8 +80,8 @@ test bool testGetUnitsRisk() {
     return getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)) == ("veryHighRisk":51,"noRisk":1957,"highRisk":184,"moderateRisk":223);
 }
 test bool testNormalizeRisks() {
-    return normalizeRisks(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)))) == ("veryHighRisk":2,"noRisk":81,"highRisk":7,"moderateRisk":9);
+    return normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))) == ("veryHighRisk":2,"noRisk":81,"highRisk":7,"moderateRisk":9);
 }
 test bool testUnitSizeScore() {
-    return unitSizeScore(normalizeRisks(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))))) == "-";
+    return unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)))) == "-";
 }
