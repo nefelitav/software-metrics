@@ -1,4 +1,4 @@
-module Volume
+module Metrics::Volume
 
 import IO;
 import List;

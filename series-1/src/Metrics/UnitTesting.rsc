@@ -1,8 +1,7 @@
-module UnitTesting
+module Metrics::UnitTesting
 
 import IO;
 import List;
-import Set;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
@@ -37,7 +36,6 @@ int countAssertStatements(loc methodLoc) {
     int asserts = 0;
     bool insideBlockComment = false;
     for (line <- readFileLines(methodLoc)) {
-        println("argument");
         // ignore comments
         if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
             // inside the block comment
@@ -56,6 +54,7 @@ int countAssertStatements(loc methodLoc) {
     return asserts;
 }
 
+// get number of assert statements for every method
 map[loc, int] assertsInUnits(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     map[loc, int] methodsAsserts = ();
@@ -70,6 +69,7 @@ map[loc, int] assertsInUnits(loc projectLoc) {
     return methodsAsserts;
 }
 
+// place every method in a "test coverage" category
 map[str, int] getUnitsCategories(map[loc, int] methodsAsserts) {
     categories = (
 		"low": 0,
@@ -77,7 +77,6 @@ map[str, int] getUnitsCategories(map[loc, int] methodsAsserts) {
 		"high": 0,
 		"veryHigh": 0
 	);
-    // place every method in a category
 	for (key <- methodsAsserts) {	
         int methodsAssert = methodsAsserts[key];
 		if (methodsAssert <= 2) {
@@ -93,9 +92,9 @@ map[str, int] getUnitsCategories(map[loc, int] methodsAsserts) {
     return categories;
 }
 
-// normalization
+// normalization of results with pecentages
 map[str, int] normalizeScores(map[str, int] scores) {
-    // get sum of scores, basically number of methods
+    // get number of methods in each category
     int sumScores = scores["low"] + scores["moderate"] + scores["high"] + scores["veryHigh"];   
 	scores["low"] = scores["low"] * 100 / sumScores;
 	scores["moderate"] = scores["moderate"] * 100 / sumScores;
@@ -104,17 +103,31 @@ map[str, int] normalizeScores(map[str, int] scores) {
     return scores;
 }
 
-// return rating
+// return rank
 str unitTestingScore(map[str, int] categories) {
     if (categories["moderate"] <= 25 && categories["high"] == 0 && categories["veryHigh"] == 0) {
-        return "++";
+        return "--";
     } else if (categories["moderate"] <= 30 && categories["high"] <= 5 && categories["veryHigh"] == 0) {
-        return "+";
+        return "-";
     } else if (categories["moderate"] <= 40 && categories["high"] <= 10 && categories["veryHigh"] == 0) {
         return "o";
     } else if (categories["moderate"] <= 50 && categories["high"] <= 15 && categories["veryHigh"] <= 5) {
-        return "-";
+        return "+";
     } else {
-        return "--";
+        return "++";
     }
+}
+
+// Tests on smallsql
+test bool tesCountAssertStatements() {
+    return countAssertStatements(|project://smallsql0.21_src/src/smallsql/database/Language/Language.java|) == 4;
+}
+test bool testGetUnitsCategories() {
+    return getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|)) == ("high":20,"moderate":64,"low":81,"veryHigh":18);
+}
+test bool testNormalizeScores() {
+    return normalizeScores(getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|))) == ("high":10,"moderate":34,"low":44,"veryHigh":9);
+}
+test bool testUnitSizeScore() {
+    return unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|)))) == "++";
 }
