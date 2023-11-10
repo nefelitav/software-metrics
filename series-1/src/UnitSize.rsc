@@ -3,9 +3,6 @@ module UnitSize
 import Volume;
 import IO;
 import List;
-import Set;
-import Map;
-import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 
@@ -18,6 +15,7 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
+// get lines of code of a unit/method, subtracting blank lines and comments
 map[loc, int] LOCUnits(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     map[loc, int] methodsLoc = ();
@@ -27,6 +25,7 @@ map[loc, int] LOCUnits(loc projectLoc) {
     return methodsLoc;
 }
 
+// get risk profile for every method and gather results
 map[str, int] getUnitsRisk(map[loc, int] methodsLoc) {
     risks = (
 		"noRisk": 0,
@@ -50,9 +49,9 @@ map[str, int] getUnitsRisk(map[loc, int] methodsLoc) {
     return risks;
 }
 
-// normalization
+// normalization of results with pecentages
 map[str, int] normalizeRisks(map[str, int] risks) {
-    // get sum of risks, basically number of methods
+    // get number of methods in each category
     int sumRisks = risks["noRisk"] + risks["moderateRisk"] + risks["highRisk"] + risks["veryHighRisk"];   
 	risks["noRisk"] = risks["noRisk"] * 100 / sumRisks;
 	risks["moderateRisk"] = risks["moderateRisk"] * 100 / sumRisks;
@@ -61,7 +60,7 @@ map[str, int] normalizeRisks(map[str, int] risks) {
     return risks;
 }
 
-// return rating
+// return rank
 str unitSizeScore(map[str, int] risks) {
     if (risks["moderateRisk"] <= 25 && risks["highRisk"] == 0 && risks["veryHighRisk"] == 0) {
         return "++";
@@ -74,4 +73,15 @@ str unitSizeScore(map[str, int] risks) {
     } else {
         return "--";
     }
+}
+
+// Tests on smallsql
+test bool testGetUnitsRisk() {
+    return getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)) == ("veryHighRisk":51,"noRisk":1957,"highRisk":184,"moderateRisk":223);
+}
+test bool testNormalizeRisks() {
+    return normalizeRisks(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)))) == ("veryHighRisk":2,"noRisk":81,"highRisk":7,"moderateRisk":9);
+}
+test bool testUnitSizeScore() {
+    return unitSizeScore(normalizeRisks(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))))) == "-";
 }
