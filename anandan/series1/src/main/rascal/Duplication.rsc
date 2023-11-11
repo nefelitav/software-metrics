@@ -1,4 +1,4 @@
-module Main
+module Duplication
 
 import util::Math;
 import IO;
@@ -9,6 +9,7 @@ import String;
 import List;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
+import Volume;
 
 // Add block to Maps
 map[str, int] addToMap(map[str, int] blocks, str block){
@@ -69,8 +70,8 @@ int findNumberOfDuplicateLines(map[str, int] blocks){
 
 // Find Duplicate blocks (6 lines ) of code in a project
 str duplicateBlocksOfCodeProject(loc projectLoc) {
-    map[str, int] blocks = ();
     M3 model = createM3FromMavenProject(projectLoc);
+    map[str, int] blocks = ();
     // iterate over files of project and create blocks
     for (file <- files(model.containment)) {
         blocks = createBlocks(blocks, file.top);
@@ -80,11 +81,13 @@ str duplicateBlocksOfCodeProject(loc projectLoc) {
 
     int numberOfDuplicateLines = findNumberOfDuplicateLines(duplicateBlocks);
 
-    // int totalLine = LOC(); Needs to be called when integrating Nefeli's code
     // might need to convert into real
-    int totalLines = 1000;
+    int totalLines = LOC(projectLoc);
     // percentage = part / whole * 100
+    println(totalLines);
+    println(numberOfDuplicateLines);
     int percentageOfDuplicates = round ((toReal (numberOfDuplicateLines)) / (toReal (totalLines)) * 100.0);
+    println(percentageOfDuplicates);
     return duplicateRanking(percentageOfDuplicates);
 }
 
