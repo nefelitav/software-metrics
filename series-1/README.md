@@ -1,8 +1,11 @@
 - add comments
-- add tests, results, scalability
+- print everything
+- structure
+- add tests, results
+- scalable(hsqldb)
+- script to run
+- find another metric in the literature and argue why and how it would improve the results, implement it
+- verify results are correct
+
 - describe relevant design decisions, 
 - accuracy, improvements
-- well-structured
-- find another metric in the literature and argue why and how it would improve the results, implement it
-- script to run
-- print everything

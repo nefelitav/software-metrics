@@ -136,3 +136,11 @@ test bool testCommentsProject() {
 test bool testVolumeScore() {
     return volumeScore(LOC(|project://smallsql0.21_src|)) == "++";
 }
+
+// Scalability tests on hsqldb
+test bool testLinesOfCodeProjectHsqldb() {
+    return linesOfCodeProject(|project://hsqldb-2.3.1|) == 299077;
+}
+test bool testVolumeScoreHsqldb() {
+    return volumeScore(LOC(|project://hsqldb-2.3.1|)) == "+";
+}

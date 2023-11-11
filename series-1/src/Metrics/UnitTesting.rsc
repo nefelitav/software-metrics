@@ -131,3 +131,10 @@ test bool testNormalizeScores() {
 test bool testUnitSizeScore() {
     return unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|)))) == "++";
 }
+// Scalability tests on hsqldb
+// test bool testGetUnitsCategoriesHsqldb() {
+//     return getUnitsCategories(assertsInUnits(|project://hsqldb-2.3.1|)) == ;
+// }
+// test bool testUnitSizeScoreHsqldb() {
+//     return unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(|project://hsqldb-2.3.1|)))) == ;
+// }
