@@ -124,6 +124,9 @@ test bool testBlankLinesFile() {
 test bool testCommentsFile() {
     return commentsFile(|project://smallsql0.21_src/src/smallsql/database/Column.java|) == 37;
 }
+test bool testLOCProject() {
+    return LOC(|project://smallsql0.21_src|) == 24004;
+}
 test bool testLinesOfCodeProject() {
     return linesOfCodeProject(|project://smallsql0.21_src|) == 38423;
 }
@@ -135,4 +138,15 @@ test bool testCommentsProject() {
 }
 test bool testVolumeScore() {
     return volumeScore(LOC(|project://smallsql0.21_src|)) == "++";
+}
+
+// Scalability tests on hsqldb
+// test bool LOCHsqldb() {
+//     return LOC(|project://hsqldb-2.3.1|) == 299077;
+// }
+test bool testLinesOfCodeProjectHsqldb() {
+    return linesOfCodeProject(|project://hsqldb-2.3.1|) == 299077;
+}
+test bool testVolumeScoreHsqldb() {
+    return volumeScore(LOC(|project://hsqldb-2.3.1|)) == "+";
 }
