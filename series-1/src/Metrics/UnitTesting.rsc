@@ -1,7 +1,5 @@
 module Metrics::UnitTesting
 
-import IO;
-import List;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
@@ -20,22 +18,17 @@ import Lib::Utilities;
 // ------------------------------
 // 2) Number of assert statements
 
-// number of assert statements, not in comments
-int countAssertStatements(loc methodLoc) {
+// number of assert statements, check method calls' names have the substring "assert"
+int countAssertStatements(Declaration ast) {
     int asserts = 0;
-    bool insideBlockComment = false;
-    for (line <- readFileLines(methodLoc)) {
-        // ignore comments
-        if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
-            // inside the block comment
-            insideBlockComment = true;
-            if (endsWith(trim(line), "*/")) {
-                // outside the block comment
-                insideBlockComment = false; 
+	visit(ast) {
+        case \methodCall(_, name, _): {
+            if (contains(name, "assert")) {
+                asserts += 1;
             }
-        // if there is a line comment inside a block comment we do not add it to the line comments
-        } else if (!startsWith(trim(line), "//")) {
-            if (contains(line, "assert")) {
+        }
+        case \methodCall(_, _, name, _): {
+            if (contains(name, "assert")) {
                 asserts += 1;
             }
         }
@@ -43,19 +36,34 @@ int countAssertStatements(loc methodLoc) {
     return asserts;
 }
 
-// get number of assert statements for every method
+// get number of assert statements for every method in a folder
 map[loc, int] assertsInUnits(loc folderLoc) {
-    // look in a specific folder, eg junit, test, so that we do not spoil our results with files that arent for testin purposes.
-    M3 model = createM3FromDirectory(folderLoc);
+    // look in a specific folder, eg junit, test, so that we do not spoil our results with files that arent for testing purposes.
+	list[Declaration] asts = getASTsFolder(folderLoc);
     map[loc, int] methodsAsserts = ();
     int assertStatements = 0;
-    for(method <- methods(model)) {
-            assertStatements = countAssertStatements(method);
+    visit(asts) {
+        // iterate over all methods
+		case Declaration decl: \method(_, _, _, _, _): {
+            assertStatements = countAssertStatements(decl);
             // check that it is a test method
             if (assertStatements != 0) {
-                methodsAsserts[method] = assertStatements;
+                methodsAsserts[decl.src] = assertStatements;
             }
-    }
+        }
+		case Declaration decl: \method(_, _, _, _): {
+            assertStatements = countAssertStatements(decl);
+            if (assertStatements != 0) {
+                methodsAsserts[decl.src] = assertStatements;
+            }
+        }
+		case Declaration decl: \constructor(_, _, _, _): {
+            assertStatements = countAssertStatements(decl);
+            if (assertStatements != 0) {
+                methodsAsserts[decl.src] = assertStatements;
+            }
+        }
+	}
     return methodsAsserts;
 }
 
