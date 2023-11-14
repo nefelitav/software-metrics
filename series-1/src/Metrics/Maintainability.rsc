@@ -14,19 +14,6 @@ import Metrics::UnitSize;
 // import Metrics::Duplication;
 import Metrics::UnitTesting;
 
-// Halstead Volume (HV)
-// Cyclomatic Complexity (CC) 
-// the average number of lines of code per module (LOC)
-// and optionally the percentage of comment lines per module (COM)
-// 171−5.2ln(HV)−0.23CC−16.2ln(LOC)+50.0sin√(2.46 ∗ COM)
-// the higher the score, the more maintainable 
-
-
-int main(int testArgument=0) {
-    println("argument: <testArgument>");
-    return testArgument;
-}
-
 int numerize(str ranking) {
     switch(ranking) {
         case "++": return 0;

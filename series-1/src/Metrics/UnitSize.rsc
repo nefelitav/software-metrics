@@ -5,31 +5,15 @@ import IO;
 import List;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
+import Lib::Utilities;
 
 // Unit size: The size of units influences their analysability and testability and therefore the system as a whole.
 // A unit is the smallest piece of code that can be executed and tested individually eg a method for java
 // 1) LOC per unit
 
-int main(int testArgument=0) {
-    println("argument: <testArgument>");
-    return testArgument;
-}
-
-list[Declaration] getASTs(loc projectLocation) {
-    M3 model = createM3FromMavenProject(projectLocation);
-    list[Declaration] asts = [createAstFromFile(f, true)
-    | f <- files(model.containment), isCompilationUnit(f)];
-    return asts;
-}
-
 // get lines of code of a unit/method, subtracting blank lines and comments
 map[loc, int] LOCUnits(loc projectLoc) {
-    // M3 model = createM3FromMavenProject(projectLoc);
     map[loc, int] methodsLoc = ();
-    // for(method <- methods(model)) {
-    //     methodsLoc[method] = (linesOfCodeFile(method) - blankLinesFile(method) - commentsFile(method));
-    // }
-
 	list[Declaration] asts = getASTs(projectLoc);
 	visit(asts) {
 		case Declaration decl: \method(_, _, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));

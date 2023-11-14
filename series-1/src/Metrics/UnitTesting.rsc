@@ -5,6 +5,7 @@ import List;
 import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
+import Lib::Utilities;
 
 // Unit Testing:
 // 1) Unit test coverage, e.g with Clover
@@ -18,18 +19,6 @@ import lang::java::m3::AST;
 // --    |    0-20%             -
 // ------------------------------
 // 2) Number of assert statements
-
-int main(int testArgument=0) {
-    println("argument: <testArgument>");
-    return testArgument;
-}
-
-list[Declaration] getASTs(loc projectLoc) {
-    M3 model = createM3FromMavenProject(projectLoc);
-    list[Declaration] asts = [createAstFromFile(f, true)
-    | f <- files(model.containment), isCompilationUnit(f)];
-    return asts;
-}
 
 // number of assert statements, not in comments
 int countAssertStatements(loc methodLoc) {

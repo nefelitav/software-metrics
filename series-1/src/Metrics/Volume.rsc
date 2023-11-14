@@ -20,11 +20,6 @@ import lang::java::m3::AST;
 // --       > 160     > 1,310     -
 //---------------------------------
 
-int main(int testArgument=0) {
-    println("argument: <testArgument>");
-    return testArgument;
-}
-
 // number of lines of code without block and line comments and blank lines
 int LOC(loc projectLoc) {
     return (linesOfCodeProject(projectLoc) - blankLinesProject(projectLoc) - commentsProject(projectLoc));
