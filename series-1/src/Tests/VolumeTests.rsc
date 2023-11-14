@@ -13,16 +13,16 @@ test bool testCommentsFileTestProject() {
     return commentsFile(|project://TestProject/src/main/java/com/example/App.java|) == 15;
 }
 test bool testLOCProjectTestProject() {
-    return LOC(|project://TestProject|) == 49;
+    return LOC(|project://TestProject|) == 77;
 }
 test bool testLinesOfCodeProjectTestProject() {
-    return linesOfCodeProject(|project://TestProject|) == 66;
+    return linesOfCodeProject(|project://TestProject|) == 113;
 }
 test bool testBlankLinesProjectTestProject() {
-    return blankLinesProject(|project://TestProject|) == 2;
+    return blankLinesProject(|project://TestProject|) == 6;
 }
 test bool testCommentsProjectTestProject() {
-    return commentsProject(|project://TestProject|) == 15;
+    return commentsProject(|project://TestProject|) == 30;
 }
 test bool testVolumeScoreTestProject() {
     return volumeScore(LOC(|project://TestProject|)) == "++";

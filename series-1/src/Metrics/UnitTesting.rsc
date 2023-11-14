@@ -55,16 +55,17 @@ int countAssertStatements(loc methodLoc) {
 }
 
 // get number of assert statements for every method
-map[loc, int] assertsInUnits(loc projectLoc) {
-    M3 model = createM3FromMavenProject(projectLoc);
+map[loc, int] assertsInUnits(loc folderLoc) {
+    // look in a specific folder, eg junit, test, so that we do not spoil our results with files that arent for testin purposes.
+    M3 model = createM3FromDirectory(folderLoc);
     map[loc, int] methodsAsserts = ();
     int assertStatements = 0;
     for(method <- methods(model)) {
-        assertStatements = countAssertStatements(method);
-        // check that it is a test method
-        if (assertStatements != 0) {
-            methodsAsserts[method] = assertStatements;
-        }
+            assertStatements = countAssertStatements(method);
+            // check that it is a test method
+            if (assertStatements != 0) {
+                methodsAsserts[method] = assertStatements;
+            }
     }
     return methodsAsserts;
 }

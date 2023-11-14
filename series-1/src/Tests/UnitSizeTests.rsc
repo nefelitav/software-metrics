@@ -4,13 +4,13 @@ import Metrics::UnitSize;
 
 // Tests on TestProject
 test bool testLocUnitsTestProject() {
-    return LOCUnits(|project://TestProject|) == (|java+compilationUnit:///src/main/java/com/example/App.java|(355,1633,<21,4>,<65,5>):40,|java+compilationUnit:///src/main/java/com/example/App.java|(73,276,<9,4>,<19,5>):5);
+    return LOCUnits(|project://TestProject|) == (|java+compilationUnit:///src/test/java/com/example/AppTest.java|(379,207,<23,4>,<31,5>):5,|java+compilationUnit:///src/test/java/com/example/AppTest.java|(205,168,<13,4>,<21,5>):4,|java+compilationUnit:///src/test/java/com/example/AppTest.java|(592,307,<33,4>,<46,5>):11,|java+compilationUnit:///src/main/java/com/example/App.java|(355,1633,<21,4>,<65,5>):40,|java+compilationUnit:///src/main/java/com/example/App.java|(73,276,<9,4>,<19,5>):5);
 }
 test bool testGetUnitsRiskTestProject() {
-    return getUnitsRisk(LOCUnits(|project://TestProject|)) == ("veryHighRisk":0,"noRisk":1,"highRisk":1,"moderateRisk":0);
+    return getUnitsRisk(LOCUnits(|project://TestProject|)) == ("veryHighRisk":0,"noRisk":3,"highRisk":1,"moderateRisk":1);
 }
 test bool testNormalizeRisksTestProject() {
-    return normalizeRisks(getUnitsRisk(LOCUnits(|project://TestProject|))) == ("veryHighRisk":0,"noRisk":50,"highRisk":50,"moderateRisk":0);
+    return normalizeRisks(getUnitsRisk(LOCUnits(|project://TestProject|))) == ("veryHighRisk":0,"noRisk":60,"highRisk":20,"moderateRisk":20);
 }
 test bool testUnitSizeScoreTestProject() {
     return unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://TestProject|)))) == "--";
