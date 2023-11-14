@@ -4,7 +4,7 @@ import Metrics::UnitSize;
 
 // Tests on TestProject
 test bool testLocUnitsTestProject() {
-    return LOCUnits(|project://TestProject|) == (|java+compilationUnit:///src/main/java/com/example/App.java|(317,1315,<20,4>,<52,5>):28, |java+compilationUnit:///src/main/java/com/example/App.java|(73,238,<9,4>,<18,5>):4);
+    return LOCUnits(|project://TestProject|) == (|java+compilationUnit:///src/main/java/com/example/App.java|(355,1633,<21,4>,<65,5>):40,|java+compilationUnit:///src/main/java/com/example/App.java|(73,276,<9,4>,<19,5>):5);
 }
 test bool testGetUnitsRiskTestProject() {
     return getUnitsRisk(LOCUnits(|project://TestProject|)) == ("veryHighRisk":0,"noRisk":1,"highRisk":1,"moderateRisk":0);

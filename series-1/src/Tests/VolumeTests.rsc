@@ -4,25 +4,25 @@ import Metrics::Volume;
 
 // Tests on TestProject
 test bool testLinesOfCodeFileTestProject() {
-    return linesOfCodeFile(|project://TestProject/src/main/java/com/example/App.java|) == 19;
+    return linesOfCodeFile(|project://TestProject/src/main/java/com/example/App.java|) == 66;
 }
 test bool testBlankLinesFileTestProject() {
-    return blankLinesFile(|project://TestProject/src/main/java/com/example/App.java|) == 1;
+    return blankLinesFile(|project://TestProject/src/main/java/com/example/App.java|) == 2;
 }
 test bool testCommentsFileTestProject() {
-    return commentsFile(|project://TestProject/src/main/java/com/example/App.java|) == 10;
+    return commentsFile(|project://TestProject/src/main/java/com/example/App.java|) == 15;
 }
 test bool testLOCProjectTestProject() {
-    return LOC(|project://TestProject|) == 8;
+    return LOC(|project://TestProject|) == 49;
 }
 test bool testLinesOfCodeProjectTestProject() {
-    return linesOfCodeProject(|project://TestProject|) == 19;
+    return linesOfCodeProject(|project://TestProject|) == 66;
 }
 test bool testBlankLinesProjectTestProject() {
-    return blankLinesProject(|project://TestProject|) == 1;
+    return blankLinesProject(|project://TestProject|) == 2;
 }
 test bool testCommentsProjectTestProject() {
-    return commentsProject(|project://TestProject|) == 10;
+    return commentsProject(|project://TestProject|) == 15;
 }
 test bool testVolumeScoreTestProject() {
     return volumeScore(LOC(|project://TestProject|)) == "++";
