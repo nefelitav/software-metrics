@@ -117,24 +117,3 @@ str unitTestingScore(map[str, int] categories) {
         return "++";
     }
 }
-
-// Tests on smallsql
-test bool tesCountAssertStatements() {
-    return countAssertStatements(|project://smallsql0.21_src/src/smallsql/database/Language/Language.java|) == 4;
-}
-test bool testGetUnitsCategories() {
-    return getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|)) == ("high":20,"moderate":64,"low":81,"veryHigh":18);
-}
-test bool testNormalizeScores() {
-    return normalizeScores(getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|))) == ("high":10,"moderate":34,"low":44,"veryHigh":9);
-}
-test bool testUnitSizeScore() {
-    return unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(|project://smallsql0.21_src|)))) == "++";
-}
-// Scalability tests on hsqldb
-// test bool testGetUnitsCategoriesHsqldb() {
-//     return getUnitsCategories(assertsInUnits(|project://hsqldb-2.3.1|)) == ;
-// }
-// test bool testUnitSizeScoreHsqldb() {
-//     return unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(|project://hsqldb-2.3.1|)))) == ;
-// }

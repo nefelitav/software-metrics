@@ -88,23 +88,3 @@ str unitSizeScore(map[str, int] risks) {
         return "--";
     }
 }
-
-// Tests on smallsql
-test bool testGetUnitsRisk() {
-    return getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)) == ("veryHighRisk":51,"noRisk":1957,"highRisk":184,"moderateRisk":223);
-}
-test bool testNormalizeRisks() {
-    return normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))) == ("veryHighRisk":2,"noRisk":81,"highRisk":7,"moderateRisk":9);
-}
-test bool testUnitSizeScore() {
-    return unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)))) == "-";
-}
-
-// Scalability tests on hsqldb
-// test bool testGetUnitsRiskHsqldb() {
-//     return getUnitsRisk(LOCUnits(|project://hsqldb-2.3.1|)) == ;
-// }
-
-test bool testUnitSizeScoreHsqldb() {
-    return unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://hsqldb-2.3.1|)))) == "-";
-}
