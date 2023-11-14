@@ -32,9 +32,9 @@ map[loc, int] LOCUnits(loc projectLoc) {
 
 	list[Declaration] asts = getASTs(projectLoc);
 	visit(asts) {
-		case decl: \method(_, _, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
-		case decl: \method(_, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
-		case decl: \constructor(_, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
+		case Declaration decl: \method(_, _, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
+		case Declaration decl: \method(_, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
+		case Declaration decl: \constructor(_, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
 	}
     return methodsLoc;
 }
