@@ -15,13 +15,27 @@ int main(int testArgument=0) {
     return testArgument;
 }
 
+list[Declaration] getASTs(loc projectLocation) {
+    M3 model = createM3FromMavenProject(projectLocation);
+    list[Declaration] asts = [createAstFromFile(f, true)
+    | f <- files(model.containment), isCompilationUnit(f)];
+    return asts;
+}
+
 // get lines of code of a unit/method, subtracting blank lines and comments
 map[loc, int] LOCUnits(loc projectLoc) {
-    M3 model = createM3FromMavenProject(projectLoc);
+    // M3 model = createM3FromMavenProject(projectLoc);
     map[loc, int] methodsLoc = ();
-    for(method <- methods(model)) {
-        methodsLoc[method] = (linesOfCodeFile(method) - blankLinesFile(method) - commentsFile(method));
-    }
+    // for(method <- methods(model)) {
+    //     methodsLoc[method] = (linesOfCodeFile(method) - blankLinesFile(method) - commentsFile(method));
+    // }
+
+	list[Declaration] asts = getASTs(projectLoc);
+	visit(asts) {
+		case decl: \method(_, _, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
+		case decl: \method(_, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
+		case decl: \constructor(_, _, _, _): methodsLoc[decl.src] = (linesOfCodeFile(decl.src) - blankLinesFile(decl.src) - commentsFile(decl.src));
+	}
     return methodsLoc;
 }
 
