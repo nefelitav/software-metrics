@@ -75,9 +75,7 @@ map[str, int] cyclomaticComplexity(loc projectLoc) {
 			risks["veryHighRisk"] += unit_sizes[unit];
 		}
 	}
-
-	//Calculat Risks Percentage
-	return normalizeRisks(risks);
+	return risks;
 }
 
 // Calculate rank based on Risk

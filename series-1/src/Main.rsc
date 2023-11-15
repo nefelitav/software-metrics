@@ -30,7 +30,7 @@ void main() {
     println("Unit Complexity:");
     println("-------");
     println("Unit Complexity: <cyclomaticComplexity(|project://smallsql0.21_src|)>");
-    println("Unit Complexity ranking: <unitComplexityScore(cyclomaticComplexity(|project://smallsql0.21_src|))>\n");
+    println("Unit Complexity ranking: <cyclomaticComplexity(normalizeRisks(|project://smallsql0.21_src|))>\n");
 
     // println("Duplication:");
     // println("----------");
