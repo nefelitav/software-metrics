@@ -15,17 +15,17 @@ map[loc, int] methodsComments(loc projectLoc) {
     return comments;
 }
 
-map[loc, int] methodsLOC(loc projectLoc) {
+map[loc, int] methodsLines(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
-    map[loc, int] methodsLOC = ();
+    map[loc, int] methodsLines = ();
     for(method <- methods(model)) {
-        methodsLOC[method] = linesOfCodeFile(method) - blankLinesFile(method);
+        methodsLines[method] = linesOfCodeFile(method) - blankLinesFile(method);
     }
-    return methodsLOC;
+    return methodsLines;
 }
 
 // get comments ratio for every method and gather results
-map[str, int] getUnitsClarity(map[loc, int] methodsComments, map[loc, int] methodsLOC) {
+map[str, int] getUnitsClarity(map[loc, int] methodsComments, map[loc, int] methodsLines) {
     clarity = (
 		"noClarity": 0,
 		"moderateClarity": 0,
@@ -33,16 +33,16 @@ map[str, int] getUnitsClarity(map[loc, int] methodsComments, map[loc, int] metho
 		"OverComments": 0
 	);
     // check risk for every method
-	for (key <- methodsLOC) {	
-        int ratio = (methodsComments[key] * 100) / methodsLOC[key];
+	for (key <- methodsLines) {	
+        int ratio = (methodsComments[key] * 100) / methodsLines[key];
 		if (ratio < 10) {
-			clarity["noClarity"] += methodsLOC[key];								
+			clarity["noClarity"] += 1;								
 		} else if (ratio <= 20) {
-			clarity["moderateClarity"] += methodsLOC[key];	
+			clarity["moderateClarity"] += 1;	
 		} else if (ratio <= 30) {
-			clarity["goodClarity"] += methodsLOC[key];		
+			clarity["goodClarity"] += 1;		
 		} else {
-			clarity["OverComments"] += methodsLOC[key];		
+			clarity["OverComments"] += 1;		
 		}	
 	} 
     return clarity;
@@ -60,10 +60,10 @@ map[str, int] normalizeScores(map[str, int] clarity) {
 }
 
 // return rank
-void clarityScore(loc projectLoc) {
+map[str, int] clarityScore(loc projectLoc) {
     map[loc, int] commentsPerMethod = methodsComments(projectLoc);
-    map[loc, int] linesPerMethod = methodsLOC(projectLoc);
+    map[loc, int] linesPerMethod = methodsLines(projectLoc);
     map[str, int] getScores = getUnitsClarity(commentsPerMethod, linesPerMethod);
     map[str, int] normalizedScores = normalizeScores(getScores);
-    print(normalizedScores);
+    return normalizedScores;
 }

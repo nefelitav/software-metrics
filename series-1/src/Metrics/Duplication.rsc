@@ -77,7 +77,6 @@ tuple [map[str, int], int] createBlocks(tuple [map[str, int], int] result, loc f
 // find number of duplicated lines in a project
 int findDuplicates(loc projectLoc) {
     int totalLines = LOC(projectLoc);
-    // println(totalLines);
     M3 model = createM3FromMavenProject(projectLoc);
     tuple [map[str, int], int] result = <(), 0>;
     // iterate over files of project and create blocks
@@ -85,9 +84,7 @@ int findDuplicates(loc projectLoc) {
         result = createBlocks(result, file.top);
     }
     numberOfDuplicateLines = result[1];
-    // println(numberOfDuplicateLines);
     int percentageOfDuplicates = round ((toReal (numberOfDuplicateLines)) / (toReal (totalLines)) * 100.0);
-    // println(percentageOfDuplicates);
     return percentageOfDuplicates;
 }
 
