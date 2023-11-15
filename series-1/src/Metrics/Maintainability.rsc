@@ -5,13 +5,14 @@ import List;
 import Set;
 import Map;
 import String;
+import util::Math;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 
 import Metrics::Volume;
 import Metrics::UnitSize;
-// import Metrics::UnitComplexity;
-// import Metrics::Duplication;
+import Metrics::UnitComplexity;
+import Metrics::Duplication;
 import Metrics::UnitTesting;
 
 int numerize(str ranking) {
@@ -40,22 +41,22 @@ str analysability(loc projectLoc) {
     int score = 
         numerize(volumeScore(LOC(projectLoc))) +
         numerize(unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(projectLoc))))) +
-        numerize(duplicationScore()) +
+        numerize(duplicationScore(findDuplicates(projectLoc))) +
         numerize(unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(projectLoc)))));
     return stringify(floor(score/4));
 }
 str changeability(loc projectLoc) {
     int score = 
-        numerize(unitComplexityScore()) +
-        numerize(duplicationScore());
+        numerize(unitComplexityScore(getUnitsRisk(cyclomaticComplexity(projectLoc), projectLoc))) +
+        numerize(duplicationScore(findDuplicates(projectLoc)));
     return stringify(floor(score/2));
 }
 str stability(loc projectLoc) {
-    return unitTestingScore();
+    return unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(projectLoc))));
 }
 str testability(loc projectLoc) {
     int score = 
-        numerize(unitComplexityScore()) +
+        numerize(unitComplexityScore(getUnitsRisk(cyclomaticComplexity(projectLoc), projectLoc))) +
         numerize(unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(projectLoc))))) +
         numerize(unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(projectLoc)))));
     return stringify(floor(score/3));
