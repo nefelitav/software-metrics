@@ -5,18 +5,10 @@ import List;
 import List;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
-import Metrics::Volume;
 import Metrics::UnitSize;
+import Lib::Utilities;
 
-//method to get ASTs from the provided location
-list[Declaration] getASTs(loc projectLocation) {
-    M3 model = createM3FromMavenProject(projectLocation);
-    list[Declaration] asts = [createAstFromFile(f, true)
-    | f <- files(model.containment), isCompilationUnit(f)];
-    return asts;
-}
-
-// Calculating complexy per unit
+// Calculating complexity per unit
 int unitComplexity(Declaration ast) {
 	int complexity = 1;
 	bool firstReturn = true;
@@ -48,8 +40,7 @@ int unitComplexity(Declaration ast) {
 
 // Calculate Cyclomatic Complexity, Identify Risk level of code
 // Calculate and return ranking
-map[str, int] cyclomaticComplexity(loc projectLoc) {
-	map[loc, int] unit_sizes = LOCUnits(projectLoc);
+map[loc, int] cyclomaticComplexity(loc projectLoc) {
 	M3 model = createM3FromMavenProject(projectLoc);
 	list[Declaration] asts = getASTs(projectLoc);
 	map[loc, int] unitComplexities = ();
@@ -62,21 +53,29 @@ map[str, int] cyclomaticComplexity(loc projectLoc) {
 		case Declaration decl: \constructor(_, _, _, _): unitComplexities[decl.src] = unitComplexity(decl);
 	}
 
-	// Identify risk for each method based on Unit Complexity
-	map[str, int] risks =  ("noRisk": 0, "moderateRisk": 0, "highRisk": 0, "veryHighRisk": 0);
+	return unitComplexities;
+}
+
+// Identify risk for each method based on Unit Complexity and normalize results
+map[str, int] getUnitsRisk(map[loc, int] unitComplexities, loc projectLoc) {
+	map[loc, int] unitSizes = LOCUnits(projectLoc);
+    risks = (
+		"noRisk": 0,
+		"moderateRisk": 0,
+		"highRisk": 0,
+		"veryHighRisk": 0
+	);
 	for (unit <- unitComplexities) {
 		if (unitComplexities[unit] <= 10) {
-			risks["noRisk"] += unit_sizes[unit];
+			risks["noRisk"] += unitSizes[unit];
 		} else if (unitComplexities[unit] <= 20) {
-			risks["moderateRisk"] += unit_sizes[unit];
+			risks["moderateRisk"] += unitSizes[unit];
 		} else if (unitComplexities[unit] <= 50) {
-			risks["highRisk"] += unit_sizes[unit];
+			risks["highRisk"] += unitSizes[unit];
 		} else {
-			risks["veryHighRisk"] += unit_sizes[unit];
+			risks["veryHighRisk"] += unitSizes[unit];
 		}
 	}
-
-	//Calculat Risks Percentage
 	return normalizeRisks(risks);
 }
 
@@ -93,9 +92,4 @@ str unitComplexityScore(map[str, int] risks) {
     } else {
         return "--";
     }
-}
-
-int main(int testArgument=0) {
-    println("argument: <testArgument>");
-    return testArgument;
 }

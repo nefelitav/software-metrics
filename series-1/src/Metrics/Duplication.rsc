@@ -4,7 +4,6 @@ import util::Math;
 import IO;
 import List;
 import Set;
-import Map;
 import String;
 import List;
 import lang::java::m3::Core;
@@ -12,54 +11,62 @@ import lang::java::m3::AST;
 import Metrics::Volume;
 import Metrics::UnitSize;
 
-// Add block to Maps
-map[str, int] addToMap(map[str, int] blocks, str block){
-    if (block in blocks) {blocks[block] += 1;}
-	else { blocks[block] = 1;}
-	return blocks;
+// if block is not in map -> add it
+//                        -> consecutive flag to false
+// if block is in map -> increment the number of occurences
+//                    -> if this block is following consecutively the original -> increment duplicate lines by 1
+//                    -> if this block is not following consecutively the original -> increment duplicate lines by 6
+//                    -> consecutive flag to true
+tuple[map[str, int], bool, int] addToMap(map[str, int] blocks, str block, bool consecutive, int duplicateLOC) { 
+    if (block in blocks) {
+        // if consecutive
+        if (consecutive) {
+            duplicateLOC += 1;
+        } else {
+            // if not consecutive
+            duplicateLOC += 6;
+        }
+        consecutive = true;
+        blocks[block] += 1;
+    } else {
+        // if new block
+        blocks[block] = 1;
+        consecutive = false;
+    }
+    return <blocks, consecutive, duplicateLOC>;
 }
 
+
 // create blocks of 6, add it to map and count duplicate lines
-tuple [map[str, int], int] createBlocks(map[str, int] blocks, loc fileLoc, int duplicateLOC) {
+tuple [map[str, int], int] createBlocks(tuple [map[str, int], int] result, loc fileLoc) {
+    map[str, int] blocks = result[0];
+    int duplicateLOC = result[1];
     list[str] lines = [];
-    // str line = "";
     bool insideBlockComment = false;
-    // str previousBlock = "";
-    bool previous = false;
+    bool consecutive = false;
+    // iterate over file lines
     for (str line <- readFileLines(fileLoc)) {
-        if (trim(line) != "" && !startsWith(trim(line), "//")) {
-             if (startsWith(trim(line), "/*") || (insideBlockComment == true)) {
+        // clean line
+        line = trim(line);
+        if (line != "" && !startsWith(line, "//")) {
+            if (startsWith(line, "/*") || (insideBlockComment == true)) {
                 // inside the block comment
                 insideBlockComment = true;
-                if (endsWith(trim(line), "*/")) {
+                if (endsWith(line, "*/")) {
                     // outside the block comment
                     insideBlockComment = false; 
                 }
-            }
-            else {
+            } else {
                 lines += line;
-                println(lines);
-                // if (size(lines) == 6){
-                //     // if the lines are 6 it considered as a block and added to the map
-                //     str block = lines[0] + lines[1] + lines[2] + lines[3] + lines[4] + lines[5];
-                //     if (block in blocks){
-                //         if (previous){
-                //             duplicateLOC += 1;
-                //         }
-                //         else{
-                //             duplicateLOC += 6;
-                //             // if (blocks[block] == 1){duplicateLOC += 12;} 
-                //             // else {duplicateLOC += 6;} //Duplicate lines for subsequent
-                //         }
-                //         previous = true;
-                //         blocks = addToMap(blocks, block);
-                //     }
-                //     else {
-                //         blocks = addToMap(blocks, block);
-                //         previous = false;
-                //     }
-                    // previousBlock = lines[0] + lines[1] + lines[2] + lines[3] + lines[4] + lines[5];
-                    lines = lines[1..6]; // Remove the first line and make it ready to form next block
+                // if the lines are 6 it considered as a block and added to the map
+                if (size(lines) == 6) {
+                    // clean lines
+                    str block = trim(lines[0]) + trim(lines[1]) + trim(lines[2]) + trim(lines[3]) + trim(lines[4]) + trim(lines[5]);
+                    updatedVars = addToMap(blocks, block, consecutive, duplicateLOC);
+                    blocks = updatedVars[0];
+                    consecutive = updatedVars[1];
+                    duplicateLOC = updatedVars[2];
+                    lines = lines[1..6]; // remove the first line and make it ready to form next block
                 }
             }
         }
@@ -67,62 +74,28 @@ tuple [map[str, int], int] createBlocks(map[str, int] blocks, loc fileLoc, int d
     return <blocks, duplicateLOC>;
 }
 
-// find duplicate blocks in a map
-// map[str, int] findDuplicates(map[str, int] blocks){
-//     for (str block <- blocks) {
-//     if (blocks[block] == 1){
-//         blocks = delete(blocks, block); // Remove blocks which are not duplicated
-//     }
-// }
-//     return blocks;
-// }
-
-// // Find number of lines duplicated
-// int findNumberOfDuplicateLines(map[str, int] blocks){
-//     int numberOfDuplicateLines = 0;
-//     for (str block <- blocks) {
-//         // First occurance contains 6 lines, consequtive counted as 1 line
-//         numberOfDuplicateLines += 6 + (blocks[block] - 1);
-//     }
-//     return numberOfDuplicateLines;
-// }
-
-// Find Duplicate blocks (6 lines ) of code in a project
-str duplicateBlocksOfCodeProject(loc projectLoc) {
+// find number of duplicated lines in a project
+int findDuplicates(loc projectLoc) {
     int totalLines = LOC(projectLoc);
-    println(totalLines);
+    // println(totalLines);
     M3 model = createM3FromMavenProject(projectLoc);
-    int duplicateLOC = 0;
-    map[str, int] blocks = ();
-    tuple [map[str, int], int] result = <blocks, duplicateLOC>;
+    tuple [map[str, int], int] result = <(), 0>;
     // iterate over files of project and create blocks
     for (file <- files(model.containment)) {
-        result = createBlocks(result[0], file.top, result[1]);
+        result = createBlocks(result, file.top);
     }
-
-    // map[str, int] duplicateBlocks = findDuplicates(blocks);
-
-    // int numberOfDuplicateLines = findNumberOfDuplicateLines(duplicateBlocks);
-
-    // percentage = part / whole * 100
     numberOfDuplicateLines = result[1];
-    println(numberOfDuplicateLines);
+    // println(numberOfDuplicateLines);
     int percentageOfDuplicates = round ((toReal (numberOfDuplicateLines)) / (toReal (totalLines)) * 100.0);
-    println(percentageOfDuplicates);
-    return duplicateRanking(percentageOfDuplicates);
+    // println(percentageOfDuplicates);
+    return percentageOfDuplicates;
 }
 
 // calculate ranking based on duplicateLOC
-public str duplicateRanking(int percentageOfDuplicates) {
-    return 	((percentageOfDuplicates >= 0 && percentageOfDuplicates <= 3) ? "++" : "") +
-  			((percentageOfDuplicates > 3 && percentageOfDuplicates <= 5) ? "+" : "") +
-  			((percentageOfDuplicates > 5 && percentageOfDuplicates <= 10) ? "o" : "") + 
-  			((percentageOfDuplicates > 10 && percentageOfDuplicates <= 20) ? "-" : "") + 
-  			((percentageOfDuplicates > 20) ? "--" : "");
-}
-
-
-int main(int testArgument=0) {
-    println("argument: <testArgument>");
-    return testArgument;
+str duplicationScore(int percentageOfDuplicates) {
+    return 	((percentageOfDuplicates >= 0 && percentageOfDuplicates < 3) ? "++" : "") +
+  			((percentageOfDuplicates >= 3 && percentageOfDuplicates < 5) ? "+" : "") +
+  			((percentageOfDuplicates >= 5 && percentageOfDuplicates < 10) ? "o" : "") + 
+  			((percentageOfDuplicates >= 10 && percentageOfDuplicates < 20) ? "-" : "") + 
+  			((percentageOfDuplicates >= 20) ? "--" : "");
 }

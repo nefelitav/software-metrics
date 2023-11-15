@@ -3,7 +3,6 @@ import Metrics::Maintainability;
 import Metrics::Volume;
 import Metrics::UnitTesting;
 import Metrics::UnitSize;
-import Metrics::UnitComplexity;
 
 import IO;
 import List;
@@ -26,17 +25,6 @@ void main() {
     println("----------");
     println("Unit Size risk profile: <getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))>");
     println("Unit Size ranking: <unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))))>\n");
-
-    println("Unit Complexity:");
-    println("-------");
-    println("Unit Complexity: <cyclomaticComplexity(|project://smallsql0.21_src|)>");
-    println("Unit Complexity ranking: <unitComplexityScore(cyclomaticComplexity(|project://smallsql0.21_src|))>\n");
-
-    // println("Duplication:");
-    // println("----------");
-    // println("Duplication profile: <getDuplication(|project://smallsql0.21_src))>");
-    // println("Duplication ranking: <duplicationScore(getDuplication(|project://smallsql0.21_src|))>\n");
-
 
     println("Unit Testing:");
     println("-------------");
