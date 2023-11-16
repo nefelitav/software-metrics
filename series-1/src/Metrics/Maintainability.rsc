@@ -1,14 +1,8 @@
 module Metrics::Maintainability
 
-import IO;
-import List;
-import Set;
-import Map;
-import String;
-import util::Math;
-import lang::java::m3::Core;
-import lang::java::m3::AST;
 
+import Set;
+import util::Math;
 import Metrics::Volume;
 import Metrics::UnitSize;
 import Metrics::UnitComplexity;
@@ -47,7 +41,7 @@ str analysability(loc projectLoc) {
 }
 str changeability(loc projectLoc) {
     int score = 
-        numerize(unitComplexityScore(getUnitsRisk(cyclomaticComplexity(projectLoc), projectLoc))) +
+        numerize(unitsComplexityScore(normalizeRisks(unitsComplexityRisk(|project://smallsql0.21_src|)))) +
         numerize(duplicationScore(findDuplicates(projectLoc)));
     return stringify(floor(score/2));
 }
@@ -56,7 +50,7 @@ str stability(loc projectLoc) {
 }
 str testability(loc projectLoc) {
     int score = 
-        numerize(unitComplexityScore(getUnitsRisk(cyclomaticComplexity(projectLoc), projectLoc))) +
+        numerize(unitsComplexityScore(normalizeRisks(unitsComplexityRisk(|project://smallsql0.21_src|)))) +
         numerize(unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(projectLoc))))) +
         numerize(unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(projectLoc)))));
     return stringify(floor(score/3));

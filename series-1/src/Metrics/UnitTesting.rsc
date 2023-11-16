@@ -4,6 +4,7 @@ import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import Lib::Utilities;
+import util::Math;
 
 // Unit Testing:
 // 1) Unit test coverage, e.g with Clover
@@ -94,10 +95,10 @@ map[str, int] getUnitsCategories(map[loc, int] methodsAsserts) {
 map[str, int] normalizeScores(map[str, int] scores) {
     // get number of methods in each category
     int sumScores = scores["low"] + scores["moderate"] + scores["high"] + scores["veryHigh"];   
-	scores["low"] = scores["low"] * 100 / sumScores;
-	scores["moderate"] = scores["moderate"] * 100 / sumScores;
-	scores["high"] = scores["high"] * 100 / sumScores;
-	scores["veryHigh"] = scores["veryHigh"] * 100 / sumScores;
+	scores["low"] = round(toReal(scores["low"]) * 100.0 / toReal(sumScores));
+	scores["moderate"] = round(toReal(scores["moderate"]) * 100 / toReal(sumScores));
+	scores["high"] = round(toReal(scores["high"]) * 100 / toReal(sumScores));
+	scores["veryHigh"] = round(toReal(scores["veryHigh"]) * 100 / toReal(sumScores));
     return scores;
 }
 

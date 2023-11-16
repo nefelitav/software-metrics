@@ -7,11 +7,12 @@ import Metrics::Duplication;
 import Metrics::UnitComplexity;
 
 import IO;
-import String;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
+// import DateTime;
 
 void main(loc projectLoc) {
+    // DateTime start = now();
     println("Maintainability scores for smallsql project");
     println("------------------------------------------\n");
 
@@ -27,8 +28,8 @@ void main(loc projectLoc) {
 
     println("Unit Complexity:");
     println("-------");
-    println("Unit Complexity risk profile: <getUnitsRisk(cyclomaticComplexity(projectLoc), projectLoc)>");
-    println("Unit Complexity ranking: <unitComplexityScore(getUnitsRisk(cyclomaticComplexity(projectLoc), projectLoc))>\n");
+    println("Unit Complexity risk profile: <normalizeRisks(unitsComplexityRisk(projectLoc))>");
+    println("Unit Complexity ranking: <unitsComplexityScore(normalizeRisks(unitsComplexityRisk(projectLoc)))>\n");
 
     println("Duplication:");
     println("----------");
@@ -60,4 +61,7 @@ void main(loc projectLoc) {
     println("-------");
     println("Maintainability ranking: <maintainability(projectLoc)>\n");
 
+    // end := now();
+    // elapsed := end - start;
+    // println("Runtime: ", elapsed);
 }

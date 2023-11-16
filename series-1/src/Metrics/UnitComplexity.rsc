@@ -1,8 +1,5 @@
 module Metrics::UnitComplexity
 
-import IO;
-import List;
-import List;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import Metrics::UnitSize;
@@ -40,25 +37,25 @@ int unitComplexity(Declaration ast) {
 
 // Calculate Cyclomatic Complexity, Identify Risk level of code
 // Calculate and return ranking
-map[loc, int] cyclomaticComplexity(loc projectLoc) {
+map[loc, int] unitsComplexity(loc projectLoc) {
 	M3 model = createM3FromMavenProject(projectLoc);
 	list[Declaration] asts = getASTs(projectLoc);
-	map[loc, int] unitComplexities = ();
+	map[loc, int] unitsComplexities = ();
 
 	// Visiting each methood/constructor and calling unitComplexity method function
 	// to calculate unit complexity for each module/constructor
 	visit(asts) {
-		case Declaration decl: \method(_, _, _, _, _): {unitComplexities[decl.src] = unitComplexity(decl);}
-		case Declaration decl: \method(_, _, _, _): {unitComplexities[decl.src] = unitComplexity(decl);}
-		case Declaration decl: \constructor(_, _, _, _): unitComplexities[decl.src] = unitComplexity(decl);
+		case Declaration decl: \method(_, _, _, _, _): {unitsComplexities[decl.src] = unitComplexity(decl);}
+		case Declaration decl: \method(_, _, _, _): {unitsComplexities[decl.src] = unitComplexity(decl);}
+		case Declaration decl: \constructor(_, _, _, _): unitsComplexities[decl.src] = unitComplexity(decl);
 	}
-
-	return unitComplexities;
+	return unitsComplexities;
 }
 
 // Identify risk for each method based on Unit Complexity and normalize results
-map[str, int] getUnitsRisk(map[loc, int] unitComplexities, loc projectLoc) {
+map[str, int] unitsComplexityRisk(loc projectLoc) {
 	map[loc, int] unitSizes = LOCUnits(projectLoc);
+	map[loc, int] unitComplexities = unitsComplexity(projectLoc);
     risks = (
 		"noRisk": 0,
 		"moderateRisk": 0,
@@ -76,11 +73,11 @@ map[str, int] getUnitsRisk(map[loc, int] unitComplexities, loc projectLoc) {
 			risks["veryHighRisk"] += unitSizes[unit];
 		}
 	}
-	return normalizeRisks(risks);
+	return risks;
 }
 
 // Calculate rank based on Risk
-str unitComplexityScore(map[str, int] risks) {
+str unitsComplexityScore(map[str, int] risks) {
     if (risks["moderateRisk"] <= 25 && risks["highRisk"] == 0 && risks["veryHighRisk"] == 0) {
         return "++";
     } else if (risks["moderateRisk"] <= 30 && risks["highRisk"] <= 5 && risks["veryHighRisk"] == 0) {

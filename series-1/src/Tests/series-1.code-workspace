@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../smallsql0.21_src"
+		},
+		{
+			"path": "../../../TestProject"
+		}
+	],
+	"settings": {}
+}
