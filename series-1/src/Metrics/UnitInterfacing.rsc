@@ -21,7 +21,8 @@ map[loc, int] UnitsParams(loc projectLoc) {
 }
 
 // get risk profile for every method and gather results
-map[str, int] getUnitsRisk(map[loc, int] methodsParams) {
+map[str, int] getUnitsRisk(map[loc, int] methodsParams, loc projectLoc) {
+    map[loc, int] unitSizes = LOCUnits(projectLoc);
     risks = (
 		"noRisk": 0,
 		"moderateRisk": 0,
@@ -31,14 +32,14 @@ map[str, int] getUnitsRisk(map[loc, int] methodsParams) {
     // check risk for every method
 	for (key <- methodsParams) {	
         int methodParams = methodsParams[key];
-		if (methodLoc <= 15) {
-			risks["noRisk"] += 1;								
-		} else if (methodLoc <= 30) {
-			risks["moderateRisk"] += 1;
-		} else if (methodLoc <= 60) {
-			risks["highRisk"] += 1;			
+		if (methodParams <= 2) {
+			risks["noRisk"] += unitSizes[key];								
+		} else if (methodParams <= 4) {
+			risks["moderateRisk"] += unitSizes[key];
+		} else if (methodParams <= 6) {
+			risks["highRisk"] += unitSizes[key];		
 		} else {
-			risks["veryHighRisk"] += 1;			
+			risks["veryHighRisk"] += unitSizes[key];			
 		}	
 	} 
     return risks;
