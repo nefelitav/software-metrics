@@ -7,6 +7,7 @@ import Metrics::UnitSize;
 import Metrics::Duplication;
 import Metrics::UnitComplexity;
 import Metrics::Comments;
+import Metrics::UnitInterfacing;
 import Lib::Utilities;
 
 import IO;
@@ -29,6 +30,8 @@ void main(loc projectLoc) {
     str unitTestScore = unitTestingScore(normalizeScores(getUnitsCategories(assertsInUnits(projectLoc))));
     map[str, int] commentsRisk = normalizeRisks(unitsCommentsRisk(projectLoc));
     str commentsRiskRanking = commentsRanking(commentsRisk);
+    map[str, int] unitInterfacingRisk = normalizeRisks(getUnitsInterfacingRisk(unitsParams(projectLoc), projectLoc));
+    str unitInterfacingRiskRanking = unitInterfacingScore(unitInterfacingRisk);
     str analysabilityRanking = analysability(projectLoc);
     str testabilityRanking = testability(projectLoc);
     str stabilityRanking = stability(projectLoc);
@@ -63,6 +66,11 @@ void main(loc projectLoc) {
     println("-------------");
     println("Number of assert statements per method: <unitTests>");
     println("Unit Testing ranking: <unitTestScore>\n");
+
+    println("Unit Interfacing:");
+    println("-------------");
+    println("Unit Interfacing profile: <unitInterfacingRisk>");
+    println("Unit Interfacing ranking: <unitInterfacingRiskRanking>\n");
 
     println("Comments:");
     println("-------------");

@@ -8,7 +8,7 @@ import Lib::Utilities;
 import util::Math;
 
 
-map[loc, int] UnitsParams(loc projectLoc) {
+map[loc, int] unitsParams(loc projectLoc) {
     map[loc, int] methodsParams = ();
 	list[Declaration] asts = getASTs(projectLoc);
 	visit(asts) {
@@ -20,7 +20,7 @@ map[loc, int] UnitsParams(loc projectLoc) {
 }
 
 // get risk profile for every method and gather results
-map[str, int] getUnitsRisk(map[loc, int] methodsParams, loc projectLoc) {
+map[str, int] getUnitsInterfacingRisk(map[loc, int] methodsParams, loc projectLoc) {
     map[loc, int] unitSizes = LOCUnits(projectLoc);
     risks = (
 		"lowRisk": 0,

@@ -32,11 +32,11 @@ map[str, int] getUnitsRisk(map[loc, int] methodsLoc) {
     // check risk for every method
 	for (key <- methodsLoc) {	
         int methodLoc = methodsLoc[key];
-		if (methodLoc <= 10) {
+		if (methodLoc <= 15) {
 			risks["lowRisk"] += 1;								
-		} else if (methodLoc <= 20) {
+		} else if (methodLoc <= 30) {
 			risks["moderateRisk"] += 1;
-		} else if (methodLoc <= 50) {
+		} else if (methodLoc <= 60) {
 			risks["highRisk"] += 1;			
 		} else {
 			risks["veryHighRisk"] += 1;			
@@ -59,3 +59,5 @@ str unitSizeScore(map[str, int] risks) {
         return "--";
     }
 }
+
+
