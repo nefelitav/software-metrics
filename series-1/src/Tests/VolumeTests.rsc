@@ -4,22 +4,22 @@ import Metrics::Volume;
 
 // Tests on TestProject
 test bool testLinesOfCodeFileTestProject() {
-    return linesOfCodeFile(|project://TestProject/src/main/java/com/example/App.java|) == 66;
+    return linesOfCodeFile(|project://TestProject/src/main/java/com/example/App.java|) == 576;
 }
 test bool testBlankLinesFileTestProject() {
-    return blankLinesFile(|project://TestProject/src/main/java/com/example/App.java|) == 2;
+    return blankLinesFile(|project://TestProject/src/main/java/com/example/App.java|) == 20;
 }
 test bool testCommentsFileTestProject() {
     return commentsFile(|project://TestProject/src/main/java/com/example/App.java|) == 15;
 }
 test bool testLOCProjectTestProject() {
-    return LOC(|project://TestProject|) == 77;
+    return LOC(|project://TestProject|) == 569;
 }
 test bool testLinesOfCodeProjectTestProject() {
-    return linesOfCodeProject(|project://TestProject|) == 113;
+    return linesOfCodeProject(|project://TestProject|) == 623;
 }
 test bool testBlankLinesProjectTestProject() {
-    return blankLinesProject(|project://TestProject|) == 6;
+    return blankLinesProject(|project://TestProject|) == 24;
 }
 test bool testCommentsProjectTestProject() {
     return commentsProject(|project://TestProject|) == 30;

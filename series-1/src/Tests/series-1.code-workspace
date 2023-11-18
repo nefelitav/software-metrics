@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../../../TestProject"
+		},
+		{
+			"path": "../../../hsqldb-2.3.1"
 		}
 	],
 	"settings": {}
