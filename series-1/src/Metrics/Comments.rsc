@@ -1,10 +1,9 @@
 module Metrics::Comments
 
-import IO;
-import List;
 import lang::java::m3::Core;
 import lang::java::m3::AST;
 import Metrics::Volume;
+import Lib::Utilities;
 
 map[loc, int] methodsComments(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
@@ -24,46 +23,46 @@ map[loc, int] methodsLines(loc projectLoc) {
     return methodsLines;
 }
 
-// get comments ratio for every method and gather results
-map[str, int] getUnitsClarity(map[loc, int] methodsComments, map[loc, int] methodsLines) {
-    clarity = (
-		"noClarity": 0,
-		"moderateClarity": 0,
-		"goodClarity": 0,
-		"OverComments": 0
+// Get comments ratio for every method and calculate risks
+map[str, int] unitsCommentsRisk(loc projectLoc) {
+    map[loc, int] unitComments = methodsComments(projectLoc);
+    map[loc, int] unitLOC = methodsLines(projectLoc);
+    risks = (
+		"lowRisk": 0,
+		"moderateRisk": 0,
+		"highRisk": 0,
+		"veryHighRisk": 0
 	);
-    // check risk for every method
-	for (key <- methodsLines) {	
-        int ratio = (methodsComments[key] * 100) / methodsLines[key];
-		if (ratio < 10) {
-			clarity["noClarity"] += 1;								
-		} else if (ratio <= 20) {
-			clarity["moderateClarity"] += 1;	
-		} else if (ratio <= 30) {
-			clarity["goodClarity"] += 1;		
+	for (unit <- unitLOC) {
+		if (unitComments[unit] <= 1) {
+			risks["veryHighRisk"] += unitLOC[unit];
+		} else if (unitComments[unit] <= 5) {
+			risks["highRisk"] += unitLOC[unit];
+		} else if (unitComments[unit] < 10) {
+			risks["moderateRisk"] += unitLOC[unit];
 		} else {
-			clarity["OverComments"] += 1;		
-		}	
-	} 
-    return clarity;
+			risks["lowRisk"] += unitLOC[unit];
+		}
+	}
+	return risks;
 }
 
-// normalization of results with pecentages
-map[str, int] normalizeScores(map[str, int] clarity) {
-    // get number of methods in each category
-    int sumScores = clarity["noClarity"] + clarity["moderateClarity"] + clarity["goodClarity"] + clarity["OverComments"];   
-	clarity["noClarity"] = clarity["noClarity"] * 100 / sumScores;
-	clarity["moderateClarity"] = clarity["moderateClarity"] * 100 / sumScores;
-	clarity["goodClarity"] = clarity["goodClarity"] * 100 / sumScores;
-	clarity["OverComments"] = clarity["OverComments"] * 100 / sumScores;
-    return clarity;
+// Return normalized Score
+map[str, int] commentsRisk(loc projectLoc) {
+    return normalizeRisks(unitsCommentsRisk(projectLoc));
 }
 
-// return rank
-map[str, int] clarityScore(loc projectLoc) {
-    map[loc, int] commentsPerMethod = methodsComments(projectLoc);
-    map[loc, int] linesPerMethod = methodsLines(projectLoc);
-    map[str, int] getScores = getUnitsClarity(commentsPerMethod, linesPerMethod);
-    map[str, int] normalizedScores = normalizeScores(getScores);
-    return normalizedScores;
+// Calculate rank based on Risk
+str commentsRanking(map[str, int] risks) {
+    if (risks["moderateRisk"] <= 25 && risks["highRisk"] == 0 && risks["veryHighRisk"] == 0) {
+        return "++";
+    } else if (risks["moderateRisk"] <= 30 && risks["highRisk"] <= 5 && risks["veryHighRisk"] == 0) {
+        return "+";
+    } else if (risks["moderateRisk"] <= 40 && risks["highRisk"] <= 10 && risks["veryHighRisk"] == 0) {
+        return "o";
+    } else if (risks["moderateRisk"] <= 50 && risks["highRisk"] <= 15 && risks["veryHighRisk"] <= 5) {
+        return "-";
+    } else {
+        return "--";
+    }
 }

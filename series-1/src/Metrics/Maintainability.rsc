@@ -8,6 +8,7 @@ import Metrics::UnitSize;
 import Metrics::UnitComplexity;
 import Metrics::Duplication;
 import Metrics::UnitTesting;
+import Lib::Utilities;
 
 int numerize(str ranking) {
     switch(ranking) {

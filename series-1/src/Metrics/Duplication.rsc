@@ -44,7 +44,7 @@ tuple [map[str, int], int] createBlocks(tuple [map[str, int], int] result, loc f
     list[str] lines = [];
     bool insideBlockComment = false;
     bool consecutive = false;
-    // iterate over file lines
+    // iterate over units
     for (str line <- readFileLines(fileLoc)) {
         // clean line
         line = trim(line);
@@ -74,11 +74,11 @@ tuple [map[str, int], int] createBlocks(tuple [map[str, int], int] result, loc f
     return <blocks, duplicateLOC>;
 }
 
-// find number of duplicated lines in a project
+// Find number of duplicated lines in a project
 int findDuplicateLOC(loc projectLoc) {
     M3 model = createM3FromMavenProject(projectLoc);
     tuple [map[str, int], int] result = <(), 0>;
-    // iterate over files of project and create blocks
+    // Iterate over files of project and create blocks
     for (file <- files(model.containment)) {
         result = createBlocks(result, file.top);
     }

@@ -57,14 +57,14 @@ map[str, int] unitsComplexityRisk(loc projectLoc) {
 	map[loc, int] unitSizes = LOCUnits(projectLoc);
 	map[loc, int] unitComplexities = unitsComplexity(projectLoc);
     risks = (
-		"noRisk": 0,
+		"lowRisk": 0,
 		"moderateRisk": 0,
 		"highRisk": 0,
 		"veryHighRisk": 0
 	);
 	for (unit <- unitComplexities) {
 		if (unitComplexities[unit] <= 10) {
-			risks["noRisk"] += unitSizes[unit];
+			risks["lowRisk"] += unitSizes[unit];
 		} else if (unitComplexities[unit] <= 20) {
 			risks["moderateRisk"] += unitSizes[unit];
 		} else if (unitComplexities[unit] <= 50) {
@@ -74,6 +74,11 @@ map[str, int] unitsComplexityRisk(loc projectLoc) {
 		}
 	}
 	return risks;
+}
+
+// Normalize Risks
+map[str, int] normalizeUnitsComplexityRisk(map[str, int] risks){
+	return normalizeRisks(risks);
 }
 
 // Calculate rank based on Risk
