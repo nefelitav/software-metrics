@@ -1,7 +1,0 @@
-- add tests in Duplication, Unit Complexity, add results in report
-- find another metric in the literature and argue why and how it would improve the results, implement it (e.g. count lines of comments)
-- verify results are correct
-- scalability
-- describe relevant design decisions (thresholds for unit size), 
-- accuracy, improvements
-- script to run
