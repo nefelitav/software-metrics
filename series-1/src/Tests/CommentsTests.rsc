@@ -4,10 +4,10 @@ import Metrics::Comments;
 
 // Tests on TestProject
 test bool testCommentsRiskTestProject() {
-    return unitsCommentsRisk(|project://TestProject|) == ("veryHighRisk":492,"lowRisk":0,"highRisk":77,"moderateRisk":11);
+    return unitsCommentsRisk(|project://TestProject|) == ("veryHighRisk":492,"lowRisk":88,"highRisk":0,"moderateRisk":0);
 }
 test bool testNormalizedCommentsRiskTestProject() {
-    return commentsRisk(|project://TestProject|) == ("veryHighRisk":85,"lowRisk":0,"highRisk":13,"moderateRisk":2);
+    return commentsRisk(|project://TestProject|) == ("veryHighRisk":85,"lowRisk":15,"highRisk":0,"moderateRisk":0);
 }
 test bool testCommentsRankingTestProject() {
     return commentsRanking(commentsRisk(|project://TestProject|)) == "--";
@@ -15,10 +15,10 @@ test bool testCommentsRankingTestProject() {
 
 // Tests on smallsql
 test bool testCommentsRiskSmallSQLProject() {
-    return unitsCommentsRisk(|project://smallsql0.21_src|) == ("veryHighRisk":14019,"lowRisk":1587,"highRisk":5127,"moderateRisk":2740);
+    return unitsCommentsRisk(|project://smallsql0.21_src|) == ("veryHighRisk":13375,"lowRisk":6470,"highRisk":2233,"moderateRisk":1395);
 }
 test bool testNormalizedCommentsRiskSmallSQLProject() {
-    return commentsRisk(|project://smallsql0.21_src|) == ("veryHighRisk":60,"lowRisk":7,"highRisk":22,"moderateRisk":12);
+    return commentsRisk(|project://smallsql0.21_src|) == ("lowRisk":28,"veryHighRisk":57,"highRisk":10,"moderateRisk":6);
 }
 test bool testCommentsRankingSmallSQLProject() {
     return commentsRanking(commentsRisk(|project://smallsql0.21_src|)) == "--";

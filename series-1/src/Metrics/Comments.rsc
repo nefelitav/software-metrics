@@ -34,11 +34,11 @@ map[str, int] unitsCommentsRisk(loc projectLoc) {
 		"veryHighRisk": 0
 	);
 	for (unit <- unitLOC) {
-		if (unitComments[unit] <= 1) {
+		if (unitComments[unit] * 100 / unitLOC[unit] <= 1) {
 			risks["veryHighRisk"] += unitLOC[unit];
-		} else if (unitComments[unit] <= 5) {
+		} else if (unitComments[unit] * 100 / unitLOC[unit] <= 5) {
 			risks["highRisk"] += unitLOC[unit];
-		} else if (unitComments[unit] < 10) {
+		} else if (unitComments[unit] * 100 / unitLOC[unit] < 10) {
 			risks["moderateRisk"] += unitLOC[unit];
 		} else {
 			risks["lowRisk"] += unitLOC[unit];
