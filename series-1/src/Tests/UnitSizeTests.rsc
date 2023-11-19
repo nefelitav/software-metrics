@@ -17,10 +17,10 @@ test bool testLocUnitsTestProject() {
 );
 }
 test bool testGetUnitsRiskTestProject() {
-    return getUnitsRisk(LOCUnits(|project://TestProject|)) == ("veryHighRisk":3,"lowRisk":3,"highRisk":1,"moderateRisk":1);
+    return getUnitsRisk(LOCUnits(|project://TestProject|)) == ("lowRisk":4,"veryHighRisk":3,"highRisk":1,"moderateRisk":0);
 }
 test bool testNormalizeRisksTestProject() {
-    return normalizeRisks(getUnitsRisk(LOCUnits(|project://TestProject|))) == ("veryHighRisk":38,"lowRisk":38,"highRisk":13,"moderateRisk":13);
+    return normalizeRisks(getUnitsRisk(LOCUnits(|project://TestProject|))) == ("lowRisk":50,"veryHighRisk":38,"highRisk":13,"moderateRisk":0);
 }
 test bool testUnitSizeScoreTestProject() {
     return unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://TestProject|)))) == "--";
@@ -28,10 +28,10 @@ test bool testUnitSizeScoreTestProject() {
 
 // Tests on smallsql
 test bool testGetUnitsRiskSmallsql() {
-    return getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)) == ("veryHighRisk":50,"lowRisk":1950,"highRisk":179,"moderateRisk":221);
+    return getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)) == ("lowRisk":2080,"veryHighRisk":29,"highRisk":80,"moderateRisk":211);
 }
 test bool testNormalizeRisksSmallsql() {
-    return normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))) == ("veryHighRisk":2,"lowRisk":81,"highRisk":7,"moderateRisk":9);
+    return normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|))) == ("lowRisk":87,"veryHighRisk":1,"highRisk":3,"moderateRisk":9);
 }
 test bool testUnitSizeScoreSmallsql() {
     return unitSizeScore(normalizeRisks(getUnitsRisk(LOCUnits(|project://smallsql0.21_src|)))) == "-";
